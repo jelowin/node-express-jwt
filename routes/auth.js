@@ -2,10 +2,9 @@ const config = process.env;
 const bcrypt = require("bcryptjs");
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const User = require("../model/user");
+const User = require("../models/user");
 
 const router = express.Router();
-
 
 router.post("/register", async (req, res) => {
     try {
@@ -37,7 +36,7 @@ router.post("/register", async (req, res) => {
               expiresIn: "2h",
             }
         );
-        
+
         user.token = token;
 
         res.status(201).json(user);
@@ -45,7 +44,7 @@ router.post("/register", async (req, res) => {
     } catch (error) {
         console.log(error);
     }
-}) 
+})
 
 router.post("/login", async (req, res) => {
 	try {
@@ -54,14 +53,14 @@ router.post("/login", async (req, res) => {
 		if (!(email && password)) {
 			res.status(400).send("All input is required");
 		}
-	
+
 		const user = await User.findOne({ email });
 
 		if (!user) {
 			res.status(400).send("Invalid Credentials");
 		}
 
-		if (user && (await bcrypt.compare(password, user.password))) {
+		if (user && (await bcrypt.compare(password.toString(), user.password))) {
 			const token = jwt.sign(
 				{ user_id: user._id, email },
 				config.JWT_SECRET,
@@ -71,8 +70,11 @@ router.post("/login", async (req, res) => {
 			);
 
 			user.token = token;
+            res.cookie('uid', token, {httpOnly: true, maxAge: 1209600, path: '/', sameSite: 'lax'})
 			res.status(200).json(user);
-		}
+		} else {
+            res.status(400).send("Invalid Credentials");
+        }
 	} catch (err) {
 		console.log(err);
 	}
