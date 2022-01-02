@@ -1,17 +1,24 @@
 const mongoose = require("mongoose");
+const { MONGO_URI } = process.env
 
-const db_options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}
+// TODO Add new test DB
+// const connectionString = NODE_ENV === 'test'
+// ? MONGO_URI_TEST
+// : MONGO_URI
 
-exports.connect = () => {
-    // Connecting to the database
-    return mongoose.connect(process.env.MONGO_URI, db_options).then(() => {
-        console.log("Successfully connected to database");
-        }).catch((error) => {
-        console.log("Database connection failed. exiting now...");
-        console.error(error);
-        process.exit(1);
-        });
-};
+const connectionString = MONGO_URI
+
+mongoose.connect(connectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then((db) => {
+    console.log('Database connected to', db.connections[0].name)
+    console.log('Database collections: ', Object.keys(db.connections[0].collections))
+  }).catch(err => {
+    console.error(err)
+  })
+
+process.on('uncaughtException', error => {
+  console.error(error)
+  mongoose.disconnect()
+})
