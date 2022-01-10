@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 const { MONGO_URI } = process.env
 
 // TODO Add new test DB
@@ -8,17 +8,20 @@ const { MONGO_URI } = process.env
 
 const connectionString = MONGO_URI
 
-mongoose.connect(connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then((db) => {
+mongoose
+  .connect(connectionString)
+  .then((db) => {
     console.log('Database connected to', db.connections[0].name)
-    console.log('Database collections: ', Object.keys(db.connections[0].collections))
-  }).catch(err => {
+    console.log(
+      'Database collections: ',
+      Object.keys(db.connections[0].collections)
+    )
+  })
+  .catch((err) => {
     console.error(err)
   })
 
-process.on('uncaughtException', error => {
+process.on('uncaughtException', (error) => {
   console.error(error)
   mongoose.disconnect()
 })
