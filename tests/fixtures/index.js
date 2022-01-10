@@ -1,10 +1,10 @@
 const testUser = {
   name: 'John',
   lastname: 'Doe',
-  email: 'john.doe@gmail.com',
-  password: '1234'
+  email: 'test@gmail.com',
+  password: '12345678',
 }
 
 module.exports = {
-  testUser
+  testUser,
 }

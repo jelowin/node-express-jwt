@@ -11,7 +11,7 @@ router.post(
   '/register',
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 }),
-  async (req, res, next) => {
+  async (req, res) => {
     const errors = validationResult(req)
 
     try {
@@ -49,7 +49,7 @@ router.post(
 
       return res.status(201).json(user)
     } catch (error) {
-      res.status(500).send('Server error')
+      console.log(error)
     }
   }
 )
@@ -104,8 +104,8 @@ router.post(
           },
         })
       }
-    } catch (err) {
-      res.status(500).send('Server error')
+    } catch (error) {
+      console.log(error)
     }
   }
 )
